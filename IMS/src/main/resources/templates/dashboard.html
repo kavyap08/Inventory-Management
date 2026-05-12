@@ -150,7 +150,7 @@
 
 
       <!-- Profile -->
-      <a href="#"
+      <a href="/profile"
          class="menu-item flex items-center gap-3 px-5 py-4 text-sm font-medium text-gray-700">
 
         <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -165,7 +165,7 @@
       <!-- Visible only for SUPERADMIN -->
 
       <a href="/staff"
-         <!--th:if="${role == 'SUPERADMIN'}-->"
+         th:if="${role == 'SUPERADMIN'}"
          class="menu-item flex items-center gap-3 px-5 py-4 text-sm font-medium text-gray-700 border-t border-gray-100">
 
         <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -196,7 +196,44 @@
 
 <!-- ===================== MAIN CONTENT ===================== -->
 
-<main class="p-8">
+<!-- ===================== MAIN CONTENT ===================== -->
+
+<div class="flex min-h-[calc(100vh-80px)]">
+
+  <!-- ===================== SIDEBAR ===================== -->
+
+  <aside class="sidebar w-72 p-6 hidden md:block">
+
+    <div class="mb-8">
+      <p class="text-xs uppercase tracking-widest text-indigo-400 font-bold mb-2">
+        Menu
+      </p>
+
+      <h2 class="text-lg font-bold text-gray-800">
+        Navigation
+      </h2>
+    </div>
+
+    <nav class="space-y-3">
+
+     
+
+      <a href="/tickets"
+         class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-2xl text-gray-700 font-semibold">
+
+        <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5h14a2 2 0 012 2v3a2 2 0 010 4v3a2 2 0 01-2 2H5a2 2 0 01-2-2v-3a2 2 0 010-4V7a2 2 0 012-2z"/>
+        </svg>
+
+        Tickets
+      </a>
+
+    </nav>
+
+  </aside>
+
+  <main class="flex-1 p-8">
+	
 
   <div class="glass-card rounded-3xl p-10 shadow-lg border border-white/50">
 
