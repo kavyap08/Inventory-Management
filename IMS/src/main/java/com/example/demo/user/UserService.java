@@ -21,7 +21,10 @@ public class UserService {
     public void findUser(User user) {
     	
     }
-    public User findByUsername(String username) {
+    public User findByUser(String username) {
 		return userrepo.findByUsername(username);
 	}
+    public List<User> findByRole(String role) {
+    	return userrepo.findByRole(role);
+    }
 }

@@ -120,9 +120,9 @@
     <button
       onclick="toggleDropdown()"
       class="avatar-ring w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm shadow-lg shadow-indigo-200 hover:scale-105 transition-all"
-      <!--th:text="${#strings.substring(username,0,1).toUpperCase()}-->"
+      th:text="${#strings.substring(username,0,1).toUpperCase()}"
     >
-      A
+      
     </button>
 
 
@@ -137,13 +137,13 @@
       <div class="px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-violet-50">
 
         <h3 class="text-sm font-bold text-gray-800"
-            <!--th:text="${username}-->">
-          Username
+            th:text="${username}">
+        
         </h3>
 
         <p class="text-xs text-indigo-500 font-semibold mt-1"
-           <!--th:text="${role}-->">
-          SUPERADMIN
+           th:text="${role}">
+          
         </p>
 
       </div>
@@ -256,8 +256,8 @@
         </p>
 
         <h3 class="text-2xl font-bold text-gray-800"
-            <!--th:text="${username}-->">
-          Username
+            th:text="${username}">
+          
         </h3>
 
       </div>
@@ -266,12 +266,12 @@
       <div class="bg-violet-50 rounded-2xl p-6 border border-violet-100">
 
         <p class="text-sm text-violet-400 font-semibold uppercase tracking-wider mb-2">
-          User Role
+         
         </p>
 
         <h3 class="text-2xl font-bold text-gray-800"
-            <!--th:text="${role}-->">
-          SUPERADMIN
+            th:text="${role}">
+         
         </h3>
 
       </div>

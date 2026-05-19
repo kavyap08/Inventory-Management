@@ -58,7 +58,7 @@
 
   </div>
 
-  <a href="/tickets"
+  <a th:href="@{/tickets}"
      class="px-5 py-3 rounded-2xl bg-indigo-100 text-indigo-600 font-semibold hover:scale-105 transition-all">
     ← Back to Tickets
   </a>
@@ -70,7 +70,7 @@
 
   <div class="glass rounded-3xl w-full max-w-3xl p-8 shadow-2xl border border-white/60">
 
-    <form action="/save-ticket" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <form th:action="@{/save-ticket}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
       <!-- Issue -->
       <div class="md:col-span-2">
@@ -83,6 +83,7 @@
           name="issue"
           rows="4"
           placeholder="Enter ticket issue"
+          required
           class="input-box w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none bg-white/70"
         ></textarea>
 
@@ -90,7 +91,7 @@
 
 
       <!-- Priority -->
-      <div>
+      <div class="md:col-span-2">
 
         <label class="block text-sm font-semibold text-gray-600 mb-2">
           Priority
@@ -98,54 +99,17 @@
 
         <select
           name="priority"
+          required
           class="input-box w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none bg-white/70"
         >
+
+          <option value="">Select Priority</option>
 
           <option value="LOW">Low</option>
 
           <option value="MEDIUM">Medium</option>
 
           <option value="CRITICAL">Critical</option>
-
-        </select>
-
-      </div>
-
-
-      <!-- Assigned To -->
-      <div>
-
-        <label class="block text-sm font-semibold text-gray-600 mb-2">
-          Assigned To
-        </label>
-
-        <input
-          type="text"
-          name="ass_to"
-          placeholder="Enter engineer username"
-          class="input-box w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none bg-white/70"
-        >
-
-      </div>
-
-
-      <!-- Status -->
-      <div class="md:col-span-2">
-
-        <label class="block text-sm font-semibold text-gray-600 mb-2">
-          Status
-        </label>
-
-        <select
-          name="status"
-          class="input-box w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none bg-white/70"
-        >
-
-          <option value="OPEN">Open</option>
-
-          <option value="CLOSE">Close</option>
-
-          <option value="IN_PROGRESS">In Progress</option>
 
         </select>
 

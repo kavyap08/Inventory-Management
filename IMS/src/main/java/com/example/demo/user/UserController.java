@@ -18,12 +18,22 @@ public class UserController {
 	
 	@GetMapping("/staff")
 	public String staff(Model model, HttpServletRequest request) {
+		 User user =  (User) request.getSession().getAttribute("sessionUser");
+		  if (user==null) {
+			  return "login";
+			  
+		  }
 		 List <User> users= service.findalluser();
 		model.addAttribute("users",users);
 		return "staff";
 	}
-	@RequestMapping("/add-staff")
+	@PostMapping("/add-staff")
 	public String addstaff(HttpServletRequest request) {
+		 User users=  (User) request.getSession().getAttribute("sessionUser");
+		  if (users==null) {
+			  return "login";
+			  
+		  }
 		    String inputUsername = request.getParameter("username");
 	        String inputPassword = request.getParameter("password");
 	        String inputRole= request.getParameter("role");
@@ -36,7 +46,7 @@ public class UserController {
 	        user.setPassword(inputPassword);
 	        user.setRole(inputRole);        
 	        service.addUser(user);
-	        return "success";
+	        return "redirect:/staff";
 	}
 
 }
