@@ -113,7 +113,7 @@
 
 <!-- ================= MAIN ================= -->
 
-<main class="p-8 flex justify-center">
+<main class="p-8 flex justify-center" th:each="user : ${users}">
 
   <div class="profile-card glass rounded-3xl w-full max-w-4xl overflow-hidden shadow-2xl border border-white/60">
 
@@ -221,7 +221,7 @@
             class="text-2xl font-bold text-gray-800"
             th:text="${user.password}"
           >
-            ****
+            ********
           </h3>
 
         </div>

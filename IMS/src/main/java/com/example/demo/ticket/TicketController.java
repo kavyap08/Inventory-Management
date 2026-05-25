@@ -3,6 +3,7 @@ package com.example.demo.ticket;
 import com.example.demo.user.UserService;
 import com.example.demo.user.User;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,10 @@ public class TicketController {
             return "redirect:/tickets";
         }
 
+       
         model.addAttribute("user", user);
         model.addAttribute("role", user.getRole());
-
+        model.addAttribute("username", user.getUsername());
         return "add-ticket";
     }
 
@@ -66,6 +68,7 @@ public class TicketController {
         ticket.setIssue(inputIssue);
         ticket.setAssignedTo(null);
         ticket.setStatus("OPEN");
+        ticket.setCreatedDate(LocalDate.now());
 
         service.addTicket(ticket);
 
@@ -73,29 +76,26 @@ public class TicketController {
     }
 
 
-    @GetMapping("/tickets/status/{status}")
-    public String statusOpen(Model model, @PathVariable String status, HttpServletRequest request) {
-
-        User user = (User) request.getSession().getAttribute("sessionUser");
-
-        if(user == null) {
-            return "redirect:/login";
-        }
-
-        List<Ticket> tickets;
-
-        if(user.getRole().equals("SUPERADMIN")) {
-            tickets = service.showStatus(status);
-        } else {
-            tickets = service.findTicketsByEngineerAndStatus(user.getUsername(), status);
-        }
-
-        model.addAttribute("tickets", tickets);
-        model.addAttribute("user", user);
-        model.addAttribute("role", user.getRole());
-
-        return "tickets";
-    }
+	/*
+	 * @GetMapping("/tickets/status/{status}") public String statusOpen(Model
+	 * model, @PathVariable String status, HttpServletRequest request) {
+	 * 
+	 * User user = (User) request.getSession().getAttribute("sessionUser");
+	 * 
+	 * if(user == null) { return "redirect:/login"; }
+	 * 
+	 * List<Ticket> tickets;
+	 * 
+	 * if(user.getRole().equals("SUPERADMIN")) { tickets =
+	 * service.showStatus(status); } else { tickets =
+	 * service.findTicketsByEngineerAndStatus(user.getUsername(), status); }
+	 * 
+	 * model.addAttribute("tickets", tickets); model.addAttribute("user", user);
+	 * model.addAttribute("role", user.getRole());
+	 * model.addAttribute("username",user.getUsername());
+	 * 
+	 * return "tickets"; }
+	 */
 
 
     @PostMapping("/change-status")
@@ -118,8 +118,28 @@ public class TicketController {
     }
 
 
+	/*
+	 * @GetMapping("/tickets") public String show(Model model, HttpServletRequest
+	 * request) {
+	 * 
+	 * User user = (User) request.getSession().getAttribute("sessionUser");
+	 * 
+	 * if(user == null) { return "redirect:/login"; }
+	 * 
+	 * List<Ticket> tickets;
+	 * 
+	 * if(user.getRole().equals("SUPERADMIN")) { tickets = service.findAllTicket();
+	 * } else { tickets = service.findTicketsByEngineer(user.getUsername()); }
+	 * 
+	 * model.addAttribute("tickets", tickets); model.addAttribute("user", user);
+	 * model.addAttribute("role", user.getRole()); model.addAttribute("username",
+	 * user.getUsername());
+	 * 
+	 * return "tickets"; }
+	 */
+    
     @GetMapping("/tickets")
-    public String show(Model model, HttpServletRequest request) {
+    public String showTickets(Model model, HttpServletRequest request) {
 
         User user = (User) request.getSession().getAttribute("sessionUser");
 
@@ -127,17 +147,32 @@ public class TicketController {
             return "redirect:/login";
         }
 
+        String status = request.getParameter("status");
+
         List<Ticket> tickets;
 
-        if(user.getRole().equals("SUPERADMIN")) {
-            tickets = service.findAllTicket();
+        if(status == null || status.trim().isEmpty()) {
+
+            if(user.getRole().equals("SUPERADMIN")) {
+                tickets = service.findAllTicket();
+            } else {
+                tickets = service.findTicketsByEngineer(user.getUsername());
+            }
+
         } else {
-            tickets = service.findTicketsByEngineer(user.getUsername());
+
+            if(user.getRole().equals("SUPERADMIN")) {
+                tickets = service.showStatus(status);
+            } else {
+                tickets = service.findTicketsByEngineerAndStatus(user.getUsername(), status);
+            }
+
         }
 
         model.addAttribute("tickets", tickets);
         model.addAttribute("user", user);
         model.addAttribute("role", user.getRole());
+        model.addAttribute("username", user.getUsername());
 
         return "tickets";
     }
@@ -166,8 +201,8 @@ public class TicketController {
     }
 
 
-    @GetMapping("/assign-ticket/{ticket_id}")
-    public String showassignticket(@PathVariable long ticket_id, Model model, HttpServletRequest request) {
+    @GetMapping("/assign-ticket")
+    public String showassignticket(Model model, HttpServletRequest request) {
 
         User user = (User) request.getSession().getAttribute("sessionUser");
 
@@ -179,6 +214,10 @@ public class TicketController {
             return "redirect:/tickets";
         }
 
+        String idValue = request.getParameter("ticket_id");
+
+        long ticket_id = Long.parseLong(idValue);
+
         Ticket ticket = service.findTicket(ticket_id);
 
         List<User> engineers = userservice.findByRole("ENGINEER");
@@ -187,6 +226,7 @@ public class TicketController {
         model.addAttribute("ticket", ticket);
         model.addAttribute("user", user);
         model.addAttribute("role", user.getRole());
+        model.addAttribute("username", user.getUsername());
 
         return "assign-ticket";
     }

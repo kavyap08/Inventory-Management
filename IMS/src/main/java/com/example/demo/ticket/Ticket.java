@@ -1,5 +1,6 @@
 package com.example.demo.ticket;
-
+import java.time.LocalDate;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,35 @@ public class Ticket {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long ticket_id;
+	
+	private LocalDate createdDate;
+
+	@Transient
+	private String customTicketId;
+
+	public LocalDate getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(LocalDate createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public void setCustomTicketId(String customTicketId) {
+		this.customTicketId = customTicketId;
+	}
+
+	
+
+	public String getCustomTicketId() {
+		if(createdDate == null) {
+	        return "TKT-" + ticket_id;
+	    }
+
+	    String formattedDate = createdDate.toString().replace("-", "");
+
+	    return "TKT-" + formattedDate + "-" + ticket_id;
+	}
 	
 	private String issue;
 	

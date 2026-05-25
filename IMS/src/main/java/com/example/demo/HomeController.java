@@ -22,29 +22,32 @@ public class HomeController {
 
     // Login Page
     @GetMapping("/login")
-    public String form(HttpServletRequest request) {
-    	 User user=  (User) request.getSession().getAttribute("sessionUser");
-		  if (user!=null) {
-			  return "redirect:/dashboard";
-			  
-		  }
+    public String form(HttpServletRequest request,Model model) {
+    	User users = (User) request.getSession().getAttribute("sessionUser");
+    	
+    	
         return "login";
     }
+
     @GetMapping("/dashboard")
-    public String dash(HttpServletRequest request, Model model) {
+    public String Dashboard(HttpServletRequest request,Model model) {
     	User user = (User) request.getSession().getAttribute("sessionUser");
     	
-    	if (user == null) {
-    	return "redirect:/login";
+    	if(user == null ) {
+    		return "redirect:/login";
     	}
     	model.addAttribute("user", user);
     	model.addAttribute("username", user.getUsername());
     	model.addAttribute("role", user.getRole());
     	return "dashboard";
-    }	
+    }
+    
     // Check Login
     @PostMapping("/login")
-    public String loginUser(HttpServletRequest request, Model model) {
+    public String loginUser(HttpServletRequest request,Model model) {
+    	
+    	
+    	
     	
         String inputUsername = request.getParameter("username");
         String inputPassword = request.getParameter("password");
@@ -55,15 +58,13 @@ public class HomeController {
         );
 
         if (user != null) {
-        	HttpSession session= request.getSession();
-        	session.setAttribute("sessionUser",user);		
-        	model.addAttribute("user", user);
-            model.addAttribute("username", user.getUsername());
-            model.addAttribute("role", user.getRole());
-
+        	 HttpSession session = request.getSession();
+        	 session.setAttribute("sessionUser", user);
+        	 model.addAttribute("user", user);
+             model.addAttribute("username", user.getUsername());
+             model.addAttribute("role", user.getRole());
 
             System.out.println("Login Success");
-            request.getSession().setAttribute("sessionUser", user);
             System.out.println(user.getUsername());
             System.out.println(user.getRole());
 
@@ -73,7 +74,7 @@ public class HomeController {
 
             System.out.println("Invalid Login");
 
-            return "login";
+            return "redirect:/login";
         }
     }
     @GetMapping("/logout")

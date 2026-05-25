@@ -22,17 +22,7 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    // Default Constructor
-    public User() {
-    }
-
-    // Parameterized Constructor
-    public User(String username, String name, String password, String role) {
-        this.username = username;
-        this.name = name;
-        this.password = password;
-        this.role = role;
-    }
+    private String avatar;
 
     // Getters and Setters
 
@@ -75,4 +65,14 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+    
+    
 }

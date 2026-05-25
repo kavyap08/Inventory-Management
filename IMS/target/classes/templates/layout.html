@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:fragment="appLayout(content)">
+
+  <style>
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(
+        135deg,
+        #eef2ff 0%,
+        #f5f3ff 50%,
+        #fdf2f8 100%
+      );
+      min-height: 100vh;
+    }
+
+    .topbar {
+      backdrop-filter: blur(14px);
+      background: rgba(255,255,255,0.82);
+      border-bottom: 1px solid rgba(99,102,241,0.1);
+    }
+
+    .dropdown {
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.25s ease;
+    }
+
+    .dropdown.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .menu-item {
+      transition: all 0.25s ease;
+    }
+
+    .menu-item:hover {
+      background: #eef2ff;
+      color: #4f46e5;
+      transform: translateX(4px);
+    }
+
+    .avatar-ring {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(99,102,241,0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(99,102,241,0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(99,102,241,0);
+      }
+    }
+
+    .glass-card {
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(18px);
+    }
+
+    .sidebar-link {
+      transition: all 0.25s ease;
+    }
+
+    .sidebar-link:hover {
+      background: #eef2ff;
+      color: #4f46e5;
+      transform: translateX(4px);
+    }
+
+  </style>
+
+
+  <header class="topbar sticky top-0 z-50 px-6 py-4 flex items-center justify-between shadow-sm">
+
+    <div class="flex items-center gap-4">
+
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+
+      </div>
+
+      <div>
+        <h1 class="text-xl font-bold text-gray-800">
+          TPM Control Tower
+        </h1>
+
+        <p class="text-xs text-indigo-500 font-semibold uppercase tracking-widest">
+          Enterprise Dashboard
+        </p>
+      </div>
+
+    </div>
+
+
+    <div class="relative">
+
+      <button
+        onclick="toggleDropdown()"
+        class="avatar-ring w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-bold text-sm shadow-lg shadow-indigo-200 hover:scale-105 transition-all"
+        th:text="${#strings.substring(username,0,1).toUpperCase()}"
+      >
+      </button>
+
+      <div
+        id="dropdownMenu"
+        class="dropdown absolute right-0 mt-4 w-64 glass-card rounded-3xl shadow-2xl border border-indigo-100 overflow-hidden"
+      >
+
+        <div class="px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-violet-50">
+
+          <h3 class="text-sm font-bold text-gray-800"
+              th:text="${username}">
+          </h3>
+
+          <p class="text-xs text-indigo-500 font-semibold mt-1"
+             th:text="${role}">
+          </p>
+
+        </div>
+
+        <a th:href="@{/profile}"
+           class="menu-item flex items-center gap-3 px-5 py-4 text-sm font-medium text-gray-700">
+
+          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+
+          Profile
+        </a>
+
+        <a th:href="@{/staff}"
+           th:if="${role == 'SUPERADMIN'}"
+           class="menu-item flex items-center gap-3 px-5 py-4 text-sm font-medium text-gray-700 border-t border-gray-100">
+
+          <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
+          </svg>
+
+          Staff
+        </a>
+
+        <a th:href="@{/logout}"
+           class="menu-item flex items-center gap-3 px-5 py-4 text-sm font-medium text-rose-500 border-t border-gray-100">
+
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+
+          Logout
+        </a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <div class="flex min-h-[calc(100vh-80px)]">
+
+    <aside class="sidebar w-72 p-6 hidden md:block">
+
+      <div class="mb-8">
+        <p class="text-xs uppercase tracking-widest text-indigo-400 font-bold mb-2">
+          Menu
+        </p>
+
+        <h2 class="text-lg font-bold text-gray-800">
+          Navigation
+        </h2>
+      </div>
+
+      <nav class="space-y-3">
+
+        <a th:href="@{/dashboard}"
+           class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-2xl text-gray-700 font-semibold">
+
+          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-9 2v8m4-8v8m5-8l2 2m-2-2v8a2 2 0 01-2 2h-3m-4 0H5a2 2 0 01-2-2v-8"/>
+          </svg>
+
+          Dashboard
+        </a>
+
+        <a th:href="@{/tickets}"
+           class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-2xl text-gray-700 font-semibold">
+
+          <svg class="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5h14a2 2 0 012 2v3a2 2 0 010 4v3a2 2 0 01-2 2H5a2 2 0 01-2-2v-3a2 2 0 010-4V7a2 2 0 012-2z"/>
+          </svg>
+
+          Tickets
+        </a>
+		
+		<a th:href="@{/parts}"
+		th:if="${role == 'SUPERADMIN'}"
+		    class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-2xl text-gray-700 font-semibold">
+
+		   <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+		     <path stroke-linecap="round" stroke-linejoin="round"
+		           d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+		   </svg>
+
+		   Part Master Catalog
+		 </a>
+		 
+		 <a th:href="@{/inventory}"
+		    class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-2xl text-gray-700 font-semibold">
+
+		   <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+		     <path stroke-linecap="round" stroke-linejoin="round"
+		           d="M3 7h18M5 7v12a2 2 0 002 2h10a2 2 0 002-2V7M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/>
+		   </svg>
+
+		   Inventory
+		 </a>
+
+        <a th:href="@{/staff}"
+           th:if="${role == 'SUPERADMIN'}"
+           class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-2xl text-gray-700 font-semibold">
+
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M9 20H4v-2a3 3 0 015.356-1.857M15 10a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+
+          Staff
+        </a>
+
+      </nav>
+
+    </aside>
+
+
+    <main class="flex-1 p-8">
+
+      <div th:replace="${content}"></div>
+
+    </main>
+
+  </div>
+
+
+  <script>
+
+    const dropdown = document.getElementById("dropdownMenu");
+
+    function toggleDropdown() {
+      dropdown.classList.toggle("show");
+    }
+
+    window.addEventListener("click", function(e) {
+
+      if(!e.target.closest(".relative")) {
+        dropdown.classList.remove("show");
+      }
+
+    });
+
+  </script>
+
+</div>
+
+</body>
+</html>
