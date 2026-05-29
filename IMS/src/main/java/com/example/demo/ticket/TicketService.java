@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.audit.AuditService;
 import com.example.demo.user.User;
 
 @Service
@@ -66,9 +67,14 @@ public class TicketService {
 	}
 	
 	
-	 public void delTicket(long ticket_id) {
-		  ticrepo.deleteById(ticket_id);
-		  }
+	public void delTicket(long ticket_id) {
+
+	    Ticket ticket = ticrepo.findById(ticket_id);
+
+	 
+
+	    ticrepo.deleteById(ticket_id);
+	}
 	
 	 public List<Ticket> findTicketsByEngineer(String username) {
 		 List<Ticket> assignedTickets = ticrepo.findByAssignedTo(username);
@@ -80,8 +86,7 @@ public class TicketService {
 		    return assignedTickets;
 		}
 
-
-	 public List<Ticket> findTicketsByEngineerAndStatus(String username, String status) {
+		public List<Ticket> findTicketsByEngineerAndStatus(String username, String status) {
 		    List<Ticket> assignedTickets = ticrepo.findByAssignedToAndStatus(username, status);
 
 		    List<Ticket> unassignedTickets = ticrepo.findByAssignedToIsNullAndStatus(status);
@@ -90,6 +95,5 @@ public class TicketService {
 
 		    return assignedTickets;
 		}
-		
 	
 }

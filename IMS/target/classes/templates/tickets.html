@@ -125,10 +125,14 @@
             <tr class="table-row border-t border-indigo-50"
                 th:each="ticket : ${tickets}">
 
-              <td class="px-8 py-5 font-bold text-gray-800"
-                  th:text="${ticket.customTicketId}">
-              </td>
+				<td class="px-8 py-5">
 
+								    <a th:href="@{/ticket-overview(ticket_id=${ticket.ticket_id})}"
+								       class="font-bold text-indigo-600 hover:underline"
+								       th:text="${ticket.customTicketId}">
+								    </a>
+
+								</td>
               <td class="px-8 py-5 text-gray-700 font-medium"
                   th:text="${ticket.issue}">
               </td>

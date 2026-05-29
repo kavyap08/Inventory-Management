@@ -1,8 +1,9 @@
 package com.example.demo.ticket;
 
 import com.example.demo.user.UserService;
+import com.example.demo.audit.AuditService;
 import com.example.demo.user.User;
-
+import com.example.demo.TicketPart.*;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,63 +19,68 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 public class TicketController {
 
-    @Autowired
-    public TicketService service;
+	@Autowired
+	public TicketService service;
 
-    @Autowired
-    public UserService userservice;
+	@Autowired
+	public UserService userservice;
 
+	@Autowired
+	private AuditService auditService;
 
-    @GetMapping("/add-ticket")
-    public String ticket(HttpServletRequest request, Model model) {
+	@Autowired
+	private TicketPartService ticketPartService;
 
-        User user = (User) request.getSession().getAttribute("sessionUser");
+	@GetMapping("/add-ticket")
+	public String ticket(HttpServletRequest request, Model model) {
 
-        if(user == null) {
-            return "redirect:/login";
-        }
+		User user = (User) request.getSession().getAttribute("sessionUser");
 
-        if(!user.getRole().equals("SUPERADMIN")) {
-            return "redirect:/tickets";
-        }
+		if (user == null) {
+			return "redirect:/login";
+		}
 
-       
-        model.addAttribute("user", user);
-        model.addAttribute("role", user.getRole());
-        model.addAttribute("username", user.getUsername());
-        return "add-ticket";
-    }
+		if (!user.getRole().equals("SUPERADMIN")) {
+			return "redirect:/tickets";
+		}
 
+		model.addAttribute("user", user);
+		model.addAttribute("role", user.getRole());
+		model.addAttribute("username", user.getUsername());
+		return "add-ticket";
+	}
 
-    @PostMapping("/save-ticket")
-    public String addTicket(HttpServletRequest request) {
+	@PostMapping("/save-ticket")
+	public String addTicket(HttpServletRequest request) {
 
-        User user = (User) request.getSession().getAttribute("sessionUser");
+		User user = (User) request.getSession().getAttribute("sessionUser");
 
-        if(user == null) {
-            return "redirect:/login";
-        }
+		if (user == null) {
+			return "redirect:/login";
+		}
 
-        if(!user.getRole().equals("SUPERADMIN")) {
-            return "redirect:/tickets";
-        }
+		if (!user.getRole().equals("SUPERADMIN")) {
+			return "redirect:/tickets";
+		}
 
-        String inputIssue = request.getParameter("issue");
-        String inputPriority = request.getParameter("priority");
+		String inputIssue = request.getParameter("issue");
+		String inputPriority = request.getParameter("priority");
 
-        Ticket ticket = new Ticket();
+		Ticket ticket = new Ticket();
 
-        ticket.setPriority(inputPriority);
-        ticket.setIssue(inputIssue);
-        ticket.setAssignedTo(null);
-        ticket.setStatus("OPEN");
-        ticket.setCreatedDate(LocalDate.now());
+		ticket.setPriority(inputPriority);
+		ticket.setIssue(inputIssue);
+		ticket.setAssignedTo(null);
+		ticket.setStatus("OPEN");
 
-        service.addTicket(ticket);
+		ticket.setCreatedDate(LocalDate.now());
 
-        return "redirect:/tickets";
-    }
+		service.addTicket(ticket);
 
+		auditService.addStatusUpdate(ticket.getTicket_id(), user.getUsername(), "Ticket created");
+
+		return "redirect:/tickets";
+	}
 
 	/*
 	 * @GetMapping("/tickets/status/{status}") public String statusOpen(Model
@@ -97,26 +103,26 @@ public class TicketController {
 	 * return "tickets"; }
 	 */
 
+	@PostMapping("/change-status")
+	public String change(HttpServletRequest request) {
 
-    @PostMapping("/change-status")
-    public String change(HttpServletRequest request) {
+		User user = (User) request.getSession().getAttribute("sessionUser");
 
-        User user = (User) request.getSession().getAttribute("sessionUser");
+		if (user == null) {
+			return "redirect:/login";
+		}
 
-        if(user == null) {
-            return "redirect:/login";
-        }
+		String inputId = request.getParameter("ticket_id");
+		String inputStatus = request.getParameter("status");
 
-        String inputId = request.getParameter("ticket_id");
-        String inputStatus = request.getParameter("status");
+		long ticket_id = Long.parseLong(inputId);
 
-        long ticket_id = Long.parseLong(inputId);
+		service.changeStatus(ticket_id, inputStatus);
 
-        service.changeStatus(ticket_id, inputStatus);
+		auditService.addStatusUpdate(ticket_id, user.getUsername(), "Changed status to " + inputStatus);
 
-        return "redirect:/tickets";
-    }
-
+		return "redirect:/tickets";
+	}
 
 	/*
 	 * @GetMapping("/tickets") public String show(Model model, HttpServletRequest
@@ -137,148 +143,190 @@ public class TicketController {
 	 * 
 	 * return "tickets"; }
 	 */
-    
-    @GetMapping("/tickets")
-    public String showTickets(Model model, HttpServletRequest request) {
 
-        User user = (User) request.getSession().getAttribute("sessionUser");
+	@GetMapping("/tickets")
+	public String showTickets(Model model, HttpServletRequest request) {
 
-        if(user == null) {
-            return "redirect:/login";
-        }
+		User user = (User) request.getSession().getAttribute("sessionUser");
 
-        String status = request.getParameter("status");
+		if (user == null) {
+			return "redirect:/login";
+		}
 
-        List<Ticket> tickets;
+		String status = request.getParameter("status");
 
-        if(status == null || status.trim().isEmpty()) {
+		List<Ticket> tickets;
 
-            if(user.getRole().equals("SUPERADMIN")) {
-                tickets = service.findAllTicket();
-            } else {
-                tickets = service.findTicketsByEngineer(user.getUsername());
-            }
+		if (status == null || status.trim().isEmpty()) {
 
-        } else {
+			if (user.getRole().equals("SUPERADMIN")) {
+				tickets = service.findAllTicket();
+			} else {
+				tickets = service.findTicketsByEngineer(user.getUsername());
+			}
 
-            if(user.getRole().equals("SUPERADMIN")) {
-                tickets = service.showStatus(status);
-            } else {
-                tickets = service.findTicketsByEngineerAndStatus(user.getUsername(), status);
-            }
+		} else {
 
-        }
+			if (user.getRole().equals("SUPERADMIN")) {
+				tickets = service.showStatus(status);
+			} else {
+				tickets = service.findTicketsByEngineerAndStatus(user.getUsername(), status);
+			}
 
-        model.addAttribute("tickets", tickets);
-        model.addAttribute("user", user);
-        model.addAttribute("role", user.getRole());
-        model.addAttribute("username", user.getUsername());
+		}
 
-        return "tickets";
-    }
+		model.addAttribute("tickets", tickets);
+		model.addAttribute("user", user);
+		model.addAttribute("role", user.getRole());
+		model.addAttribute("username", user.getUsername());
 
+		return "tickets";
+	}
 
-    @PostMapping("/delete-ticket")
-    public String del(HttpServletRequest request) {
+	@PostMapping("/delete-ticket")
+	public String del(HttpServletRequest request) {
 
-        User user = (User) request.getSession().getAttribute("sessionUser");
+		User user = (User) request.getSession().getAttribute("sessionUser");
 
-        if(user == null) {
-            return "redirect:/login";
-        }
+		if (user == null) {
+			return "redirect:/login";
+		}
 
-        if(!user.getRole().equals("SUPERADMIN")) {
-            return "redirect:/tickets";
-        }
+		if (!user.getRole().equals("SUPERADMIN")) {
+			return "redirect:/tickets";
+		}
 
-        String idValue = request.getParameter("ticket_id");
+		String idValue = request.getParameter("ticket_id");
 
-        long ticket_id = Long.parseLong(idValue);
+		long ticket_id = Long.parseLong(idValue);
 
-        service.delTicket(ticket_id);
+		service.delTicket(ticket_id);
 
-        return "redirect:/tickets";
-    }
+		return "redirect:/tickets";
+	}
 
+	@GetMapping("/assign-ticket")
+	public String showassignticket(Model model, HttpServletRequest request) {
 
-    @GetMapping("/assign-ticket")
-    public String showassignticket(Model model, HttpServletRequest request) {
+		User user = (User) request.getSession().getAttribute("sessionUser");
 
-        User user = (User) request.getSession().getAttribute("sessionUser");
+		if (user == null) {
+			return "redirect:/login";
+		}
 
-        if(user == null) {
-            return "redirect:/login";
-        }
+		if (!user.getRole().equals("SUPERADMIN")) {
+			return "redirect:/tickets";
+		}
 
-        if(!user.getRole().equals("SUPERADMIN")) {
-            return "redirect:/tickets";
-        }
+		String idValue = request.getParameter("ticket_id");
 
-        String idValue = request.getParameter("ticket_id");
+		long ticket_id = Long.parseLong(idValue);
 
-        long ticket_id = Long.parseLong(idValue);
+		Ticket ticket = service.findTicket(ticket_id);
 
-        Ticket ticket = service.findTicket(ticket_id);
+		List<User> engineers = userservice.findByRole("ENGINEER");
 
-        List<User> engineers = userservice.findByRole("ENGINEER");
+		model.addAttribute("engineers", engineers);
+		model.addAttribute("ticket", ticket);
+		model.addAttribute("user", user);
+		model.addAttribute("role", user.getRole());
+		model.addAttribute("username", user.getUsername());
 
-        model.addAttribute("engineers", engineers);
-        model.addAttribute("ticket", ticket);
-        model.addAttribute("user", user);
-        model.addAttribute("role", user.getRole());
-        model.addAttribute("username", user.getUsername());
+		return "assign-ticket";
+	}
 
-        return "assign-ticket";
-    }
+	@PostMapping("/assign-ticket")
+	public String assignTic(HttpServletRequest request) {
 
+		User user = (User) request.getSession().getAttribute("sessionUser");
 
-    @PostMapping("/assign-ticket")
-    public String assignTic(HttpServletRequest request) {
+		if (user == null) {
+			return "redirect:/login";
+		}
 
-        User user = (User) request.getSession().getAttribute("sessionUser");
+		if (!user.getRole().equals("SUPERADMIN")) {
+			return "redirect:/tickets";
+		}
 
-        if(user == null) {
-            return "redirect:/login";
-        }
+		String assignedTo = request.getParameter("assignedTo");
+		String id = request.getParameter("ticket_id");
 
-        if(!user.getRole().equals("SUPERADMIN")) {
-            return "redirect:/tickets";
-        }
+		long ticket_id = Long.parseLong(id);
 
-        String assignedTo = request.getParameter("assignedTo");
-        String id = request.getParameter("ticket_id");
+		service.assignTicket(ticket_id, assignedTo);
 
-        long ticket_id = Long.parseLong(id);
+		auditService.addAssignUpdate(ticket_id, user.getUsername(), "Assigned ticket to " + assignedTo);
 
-        service.assignTicket(ticket_id, assignedTo);
+		return "redirect:/tickets";
+	}
 
-        return "redirect:/tickets";
-    }
+	@PostMapping("/close-ticket")
+	public String close(HttpServletRequest request) {
 
+		User user = (User) request.getSession().getAttribute("sessionUser");
 
-    @PostMapping("/close-ticket")
-    public String close(HttpServletRequest request) {
+		if (user == null) {
+			return "redirect:/login";
+		}
 
-        User user = (User) request.getSession().getAttribute("sessionUser");
+		String idValue = request.getParameter("ticket_id");
 
-        if(user == null) {
-            return "redirect:/login";
-        }
+		long ticket_id = Long.parseLong(idValue);
 
-        String idValue = request.getParameter("ticket_id");
+		Ticket ticket = service.findTicket(ticket_id);
 
-        long ticket_id = Long.parseLong(idValue);
+		if (ticket == null) {
+			return "redirect:/tickets";
+		}
 
-        Ticket ticket = service.findTicket(ticket_id);
+		if (user.getRole().equals("SUPERADMIN") || ticket.getAssignedTo().equals(user.getUsername())) {
+			service.closeTicket(ticket_id);
+		}
 
-        if(ticket == null) {
-            return "redirect:/tickets";
-        }
+		auditService.addStatusUpdate(ticket_id, user.getUsername(), "Ticket closed");
 
-        if(user.getRole().equals("SUPERADMIN") || ticket.getAssignedTo().equals(user.getUsername())) {
-            service.closeTicket(ticket_id);
-        }
+		return "redirect:/tickets";
+	}
 
-        return "redirect:/tickets";
-    }
+	@PostMapping("/assign-part")
+	public String assignPart(HttpServletRequest request) {
+
+	    User user = (User) request.getSession().getAttribute("sessionUser");
+
+	    if(user == null) {
+
+	        return "redirect:/login";
+	    }
+
+	    long ticketId =
+	            Long.parseLong(
+	                    request.getParameter("ticket_id")
+	            );
+
+	    String sku =
+	            request.getParameter("sku");
+
+	    int quantity =
+	            Integer.parseInt(
+	                    request.getParameter("quantity")
+	            );
+
+	    boolean success =
+	            ticketPartService.assignPartToTicket(
+	                    ticketId,
+	                    sku,
+	                    quantity,
+	                    user.getUsername()
+	            );
+
+	    if(!success) {
+
+	        return "redirect:/ticket-overview?ticket_id="
+	                + ticketId
+	                + "&error=nostock";
+	    }
+
+	    return "redirect:/ticket-overview?ticket_id="
+	            + ticketId;
+	}
 }

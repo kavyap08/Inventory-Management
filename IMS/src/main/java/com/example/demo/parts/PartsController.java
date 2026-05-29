@@ -47,8 +47,8 @@ public class PartsController {
     	String inputCategory = request.getParameter("category");
     	String inputPartName = request.getParameter("partName");
     	String inputPrice = request.getParameter("basePrice");
-    	String inputStock = request.getParameter("stock");
-    	
+    	Integer inputStock = Integer.parseInt(request.getParameter("stock"));
+    	Integer inputThreshold = Integer.parseInt(request.getParameter("threshold"));
     	Parts part = new Parts();
     	
     	part.setBasePrice(inputPrice);
@@ -56,6 +56,7 @@ public class PartsController {
     	part.setPartName(inputPartName);
     	part.setSku(inputSku);
     	part.setStock(inputStock);
+    	part.setThreshold(inputThreshold);
     	
     	partsservice.addPart(part);
     	
@@ -85,7 +86,15 @@ public class PartsController {
 	        parts = partsservice.searchParts(keyword);
 
 	    }
-
+	    long lowStockCount = parts.stream()
+	            .filter(p ->
+	            p.getStock() != null &&
+	            p.getThreshold() != null &&
+	            p.getStock() <= p.getThreshold()
+	        )
+	        .count();
+	            
+	    model.addAttribute("lowStockCount", lowStockCount);
 	    model.addAttribute("parts", parts);
 	    model.addAttribute("keyword", keyword);
 

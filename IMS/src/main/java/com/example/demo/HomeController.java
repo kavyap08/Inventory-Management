@@ -1,12 +1,14 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import com.example.demo.ticket.*;
 import com.example.demo.user.User;
+import com.example.demo.parts.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +21,12 @@ public class HomeController {
 
     @Autowired
     private HomeRepo homeRepo;
+    
+    @Autowired
+    private TicketService ticketservice;
+    
+    @Autowired
+    private PartsService partsservice;
 
     // Login Page
     @GetMapping("/login")
@@ -39,6 +47,19 @@ public class HomeController {
     	model.addAttribute("user", user);
     	model.addAttribute("username", user.getUsername());
     	model.addAttribute("role", user.getRole());
+    	model.addAttribute("totalTickets", ticketservice.findAllTicket().size());
+
+    	model.addAttribute("openTickets",
+    	        ticketservice.showStatus("OPEN").size());
+
+    	model.addAttribute("inProgressTickets",
+    	        ticketservice.showStatus("IN_PROGRESS").size());
+
+    	model.addAttribute("closedTickets",
+    	        ticketservice.showStatus("CLOSE").size());
+
+    	model.addAttribute("totalParts",
+    	        partsservice.findAllParts().size());
     	return "dashboard";
     }
     

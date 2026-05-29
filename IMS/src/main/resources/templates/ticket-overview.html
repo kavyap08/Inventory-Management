@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Ticket Overview</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</head>
+
+<body>
+
+<div th:replace="layout :: appLayout(~{::section})">
+<section>
+
+  <div class="space-y-8">
+
+    <!-- Ticket Details -->
+
+    <div class="glass rounded-3xl border border-white/60 shadow-xl p-8">
+
+      <div class="flex items-center justify-between flex-wrap gap-4">
+
+        <div>
+
+          <p class="text-sm uppercase tracking-widest text-indigo-500 font-bold">
+            Ticket Overview
+          </p>
+
+          <h1 class="text-3xl font-bold text-gray-800 mt-2"
+              th:text="${ticket.customTicketId}">
+          </h1>
+
+        </div>
+
+        <span class="px-5 py-3 rounded-full bg-indigo-100 text-indigo-600 text-sm font-bold"
+              th:text="${ticket.status}">
+        </span>
+
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+
+        <div>
+
+          <p class="text-sm text-gray-400 mb-2">
+            Issue
+          </p>
+
+          <p class="text-lg font-semibold text-gray-800"
+             th:text="${ticket.issue}">
+          </p>
+
+        </div>
+
+        <div>
+
+          <p class="text-sm text-gray-400 mb-2">
+            Priority
+          </p>
+
+          <p class="text-lg font-semibold text-orange-500"
+             th:text="${ticket.priority}">
+          </p>
+
+        </div>
+
+        <div>
+
+          <p class="text-sm text-gray-400 mb-2">
+            Assigned Engineer
+          </p>
+
+          <p class="text-lg font-semibold text-gray-800"
+             th:text="${ticket.assignedTo}">
+          </p>
+
+        </div>
+
+        <div>
+
+          <p class="text-sm text-gray-400 mb-2">
+            Status
+          </p>
+
+          <p class="text-lg font-semibold text-indigo-600"
+             th:text="${ticket.status}">
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Add Comment -->
+
+    <div class="glass rounded-3xl border border-white/60 shadow-xl p-8">
+
+      <h2 class="text-xl font-bold text-gray-800 mb-6">
+        Add Comment
+      </h2>
+
+      <form th:action="@{/add-comment}"
+            method="post"
+            class="space-y-5">
+
+        <input type="hidden"
+               name="ticket_id"
+               th:value="${ticket.ticket_id}">
+
+        <textarea
+                name="comment"
+                rows="4"
+                required
+                placeholder="Write your comment..."
+                class="w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none bg-white/70">
+        </textarea>
+
+        <button type="submit"
+                class="px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold shadow-lg hover:scale-105 transition-all">
+
+          Add Comment
+
+        </button>
+
+      </form>
+
+    </div>
+	<!-- Assign Parts -->
+
+	<div class="glass rounded-3xl border border-white/60 shadow-xl p-8">
+
+	    <h2 class="text-xl font-bold text-gray-800 mb-6">
+	        Assign Parts
+	    </h2>
+
+	    <form th:action="@{/assign-part}"
+	          method="post"
+	          class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+	        <input type="hidden"
+	               name="ticket_id"
+	               th:value="${ticket.ticket_id}">
+
+	        <!-- Part Dropdown -->
+
+	        <select
+	                name="sku"
+	                required
+	                class="px-5 py-4 rounded-2xl border border-gray-200 bg-white/70">
+
+	            <option value="">
+	                Select Part
+	            </option>
+
+	            <option th:each="part : ${parts}"
+	                    th:value="${part.sku}"
+	                    th:text="${part.sku + ' | ' + part.partName + ' | Stock : ' + part.stock}">
+	            </option>
+
+	        </select>
+
+	        <!-- Quantity -->
+
+	        <input
+	                type="number"
+	                name="quantity"
+	                min="1"
+	                required
+	                placeholder="Quantity"
+	                class="px-5 py-4 rounded-2xl border border-gray-200 bg-white/70">
+
+	        <!-- Assign Button -->
+
+	        <button
+	                type="submit"
+	                class="px-6 py-4 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold shadow-lg hover:scale-105 transition-all">
+
+	            Assign Part
+
+	        </button>
+
+	    </form>
+
+	</div>
+	<!-- Used Parts -->
+
+	<div class="glass rounded-3xl border border-white/60 shadow-xl p-8">
+
+	    <h2 class="text-xl font-bold text-gray-800 mb-6">
+	        Parts Used
+	    </h2>
+
+	    <div th:if="${#lists.isEmpty(ticketParts)}"
+	         class="text-gray-500">
+
+	        No parts assigned yet.
+
+	    </div>
+
+	    <div th:each="tp : ${ticketParts}"
+	         class="flex justify-between items-center border-b py-3">
+
+	        <div>
+
+	            <span class="font-semibold"
+	                  th:text="${tp.part.sku}">
+	            </span>
+
+	            -
+
+	            <span th:text="${tp.part.partName}">
+	            </span>
+
+	        </div>
+
+	        <div class="font-bold text-indigo-600">
+
+	            Qty :
+	            <span th:text="${tp.quantity}">
+	            </span>
+
+	        </div>
+
+	    </div>
+
+	</div>
+
+    <!-- Audit Timeline -->
+
+    <div class="glass rounded-3xl border border-white/60 shadow-xl p-8">
+
+      <h2 class="text-2xl font-bold text-gray-800 mb-8">
+        Activity Timeline
+      </h2>
+
+      <div class="space-y-6">
+
+        <div th:each="audit : ${audits}"
+             class="border-l-4 border-indigo-400 pl-6 py-2">
+
+          <div class="flex items-center gap-3 flex-wrap">
+
+            <span class="font-bold text-indigo-600"
+                  th:text="${audit.user.username}">
+            </span>
+
+            <span class="px-3 py-1 rounded-xl bg-indigo-100 text-indigo-600 text-xs font-bold"
+                  th:text="${audit.type}">
+            </span>
+
+            <span class="text-sm text-gray-400"
+                  th:text="${audit.createdAt}">
+            </span>
+
+          </div>
+
+          <p class="mt-3 text-gray-700 text-lg"
+             th:text="${audit.comment}">
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+</div>
+
+</body>
+</html>

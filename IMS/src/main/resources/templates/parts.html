@@ -143,14 +143,14 @@
                 ₹0
               </td>
 
-              <!--<td class="px-8 py-5">
+              <td class="px-8 py-5">
 
                 <span class="px-4 py-2 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-600"
-                      th:text="${part.stock}">
-                  0
+                      th:text="${part.stock}"></span>
+                  
                 </span>
 
-              </td>-->
+              </td>
 
             </tr>
 
@@ -286,7 +286,7 @@
           </div>
 
 
-         <!-- <div class="md:col-span-2">
+          <div class="md:col-span-2">
 
             <label class="block text-sm font-semibold text-gray-600 mb-2">
               Stock
@@ -301,7 +301,24 @@
               class="input-box w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none bg-white/70"
             >
 
-          </div>-->
+          </div>
+		  
+		  <div>
+
+		      <label class="block text-sm font-semibold text-gray-600 mb-2">
+		          Threshold
+		      </label>
+
+		      <input
+		          type="number"
+		          name="threshold"
+		          min="0"
+		          placeholder="Enter threshold quantity"
+		          required
+		          class="input-box w-full px-5 py-4 rounded-2xl border border-gray-200 outline-none bg-white/70"
+		      >
+
+		  </div>
 
 
           <div class="md:col-span-2 pt-4">

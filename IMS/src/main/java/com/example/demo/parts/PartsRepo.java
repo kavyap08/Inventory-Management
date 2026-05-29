@@ -12,4 +12,6 @@ public interface PartsRepo extends JpaRepository<Parts, String>{
 	        String partName,
 	        String category
 	);
+	Parts findBySku(String sku);
+	
 }

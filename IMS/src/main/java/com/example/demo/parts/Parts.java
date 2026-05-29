@@ -12,7 +12,8 @@ public class Parts {
 	
 	private String basePrice;
 	
-	private String stock;
+	private Integer stock;
+	private Integer threshold;
 
 	public String getSku() {
 		return sku;
@@ -46,11 +47,21 @@ public class Parts {
 		this.basePrice = basePrice;
 	}
 
-	public String getStock() {
+	public Integer getStock() {
 		return stock;
 	}
 
-	public void setStock(String stock) {
+	public void setStock(Integer stock) {
 		this.stock = stock;
 	}
+
+	public Integer getThreshold() {
+		return threshold;
+	}
+
+	public void setThreshold(Integer threshold) {
+		this.threshold = threshold;
+	}
+
+	
 }
