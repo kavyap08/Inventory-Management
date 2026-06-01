@@ -98,5 +98,42 @@ public class AuditService {
 
         return auditrepo.findAll();
     }
+    public void addPartAssignmentAudit(
+            long ticket_id,
+            String username,
+            String sku,
+            Integer quantity) {
+
+        Ticket ticket =
+                ticketrepo.findById(ticket_id);
+
+        User user =
+                userrepo.findByUsername(username);
+
+        Audit audit =
+                new Audit();
+
+        audit.setTicket(ticket);
+
+        audit.setUser(user);
+
+        audit.setType(
+                Audit.AuditType.ASSIGN_PART
+        );
+
+        audit.setComment(
+                "Assigned "
+                + sku
+                + " x"
+                + quantity
+                + " to ticket"
+        );
+
+        audit.setCreatedAt(
+                LocalDateTime.now()
+        );
+
+        auditrepo.save(audit);
+    }
    
 }

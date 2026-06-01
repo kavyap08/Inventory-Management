@@ -22,6 +22,7 @@ public class Audit {
 
 	        COMMENT,
 	        STATUS_UPDATE,
+	        ASSIGN_PART,
 	        ASSIGN_UPDATE
 	    }
 	    

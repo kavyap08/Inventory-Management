@@ -67,6 +67,7 @@ public class AuditController {
 
 	    Ticket ticket =
 	            ticketservice.findTicket(ticket_id);
+	    
 
 	    List<Audit> audits =
 	            auditservice.findByTicket(ticket);
@@ -76,6 +77,10 @@ public class AuditController {
 
 	    List<TicketPart> ticketParts =
 	            ticketpartservice.findByTicket(ticket);
+	    String error =
+	            request.getParameter("error");
+
+	    model.addAttribute("error", error);
 
 	    model.addAttribute("ticket", ticket);
 	    model.addAttribute("audits", audits);

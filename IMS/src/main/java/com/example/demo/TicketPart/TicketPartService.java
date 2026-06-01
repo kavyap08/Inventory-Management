@@ -75,16 +75,12 @@ public class TicketPartService {
 
         ticketPartRepo.save(ticketPart);
 
-        auditService.addComment(
+        auditService.addPartAssignmentAudit(
                 ticketId,
                 username,
-                "Assigned "
-                + part.getSku()
-                + " x"
-                + quantity
-                + " to ticket"
+                part.getSku(),
+                quantity
         );
-
         if(part.getStock()
                 <= part.getThreshold()) {
 
