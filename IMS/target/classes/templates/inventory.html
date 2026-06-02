@@ -167,6 +167,8 @@
 			    <th class="px-6 py-4 text-left">Threshold</th>
 
 			    <th class="px-6 py-4 text-left">Status</th>
+				
+				<th class="px-4 py-3">Action</th>
 
 			</tr>
 			</thead>
@@ -232,6 +234,17 @@
 				    </span>
 
 				</td>
+				<td class="px-4 py-3">
+
+						  			    <a th:if="${part.stock <= part.threshold}"
+						  			       th:href="@{/generate-pr(sku=${part.sku})}"
+						  			       class="px-4 py-2 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600">
+
+						  			        Generate PR
+
+						  			    </a>
+
+						  			</td>
 
             </tr>
 
@@ -241,8 +254,12 @@
               <td colspan="5" class="px-8 py-12 text-center text-gray-400 font-semibold">
                 No inventory parts found
               </td>
+			 
+			  
 
             </tr>
+			
+			
 
           </tbody>
 

@@ -247,6 +247,39 @@
 
 		   Inventory
 		 </a>
+		 <!-- PROCUREMENT -->
+
+		 <div th:if="${role == 'SUPERADMIN'}">
+
+		     <p class="px-4 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+
+		         Procurement
+
+		     </p>
+
+		     <a th:href="@{/pr-list}"
+		        class="flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-indigo-50 transition-all">
+
+		         <svg xmlns="http://www.w3.org/2000/svg"
+		              class="h-5 w-5"
+		              fill="none"
+		              viewBox="0 0 24 24"
+		              stroke="currentColor">
+
+		             <path stroke-linecap="round"
+		                   stroke-linejoin="round"
+		                   stroke-width="2"
+		                   d="M9 17v-6h13v6M9 5h13v6H9V5zM2 5h4v4H2V5zm0 10h4v4H2v-4z"/>
+
+		         </svg>
+
+		         <span>
+		             Purchase Requisition
+		         </span>
+
+		     </a>
+
+		 </div>
 		 
 		
 		    <a th:href="@{/audit}"
@@ -271,6 +304,8 @@
 
 		     Audit Trail
 		 </a>
+		 
+		 
 
         <a th:href="@{/staff}"
            th:if="${role == 'SUPERADMIN'}"

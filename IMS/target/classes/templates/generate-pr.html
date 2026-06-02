@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"
+xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Generate PR</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</head>
+
+<body>
+
+<div th:replace="layout :: appLayout(~{::section})">
+
+<section>
+
+<div class="glass rounded-3xl border border-white/60 shadow-xl p-8">
+
+<h1 class="text-3xl font-bold text-gray-800 mb-8">
+
+Generate Purchase Requisition
+
+</h1>
+
+<form th:action="@{/create-pr}"
+      method="post">
+
+<input type="hidden"
+       name="sku"
+       th:value="${part.sku}">
+
+<div class="grid grid-cols-2 gap-6">
+
+<div>
+
+<p class="text-gray-500 text-sm">
+
+SKU
+
+</p>
+
+<h3 class="font-bold text-lg"
+    th:text="${part.sku}">
+</h3>
+
+</div>
+
+<div>
+
+<p class="text-gray-500 text-sm">
+
+Part Name
+
+</p>
+
+<h3 class="font-bold text-lg"
+    th:text="${part.partName}">
+</h3>
+
+</div>
+
+<div>
+
+<p class="text-gray-500 text-sm">
+
+Current Stock
+
+</p>
+
+<h3 class="font-bold text-red-600 text-lg"
+    th:text="${part.stock}">
+</h3>
+
+</div>
+
+<div>
+
+<p class="text-gray-500 text-sm">
+
+Threshold
+
+</p>
+
+<h3 class="font-bold text-orange-500 text-lg"
+    th:text="${part.threshold}">
+</h3>
+
+</div>
+
+<div>
+
+<p class="text-gray-500 text-sm">
+
+Suggested Quantity
+
+</p>
+
+<h3 class="font-bold text-green-600 text-lg"
+    th:text="${100 - part.stock}">
+</h3>
+
+</div>
+
+</div>
+
+<button
+type="submit"
+class="mt-8 px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold">
+
+Create PR
+
+</button>
+
+</form>
+
+</div>
+
+</section>
+
+</div>
+
+</body>
+
+</html>

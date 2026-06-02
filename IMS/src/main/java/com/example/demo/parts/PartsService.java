@@ -30,4 +30,8 @@ public List<Parts> searchParts(String keyword) {
             keyword
     );
 }
+public Parts findBySku(String sku) {
+
+    return partsrepo.findBySku(sku);
+}
 }
